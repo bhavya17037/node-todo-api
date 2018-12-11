@@ -25,6 +25,19 @@ app.post("/todos", (req, res) => {
   );
 });
 
+app.get("/todos", (req, res) => {
+  Todo.find().then(
+    todos => {
+      res.send({
+        todos: todos
+      });
+    },
+    err => {
+      res.status(400).send(err);
+    }
+  );
+});
+
 app.listen(3000, () => {
   console.log("Yay! Node server is live on port 3000!");
 });
