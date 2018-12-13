@@ -4,29 +4,11 @@ const request = require("supertest");
 const { ObjectID } = require("mongodb");
 const { app } = require("./../server.js");
 const { Todo } = require("./../models/todo.js");
+const { dummy, populateTodos, users, populateUsers } = require("./seed/seed");
 //const { User } = require("./../models/user.js");
 
-const dummy = [
-  { _id: new ObjectID(), text: "first todo" },
-  {
-    _id: new ObjectID(),
-    text: "second todo",
-    completed: true,
-    completedAt: 333
-  }
-];
-
-beforeEach(done => {
-  Todo.remove({})
-    .then(
-      () => {
-        // chaining promises
-        return Todo.insertMany(dummy);
-      },
-      e => {}
-    )
-    .then(() => done(), e => {});
-});
+beforeEach(populateUsers);
+beforeEach(populateTodos);
 
 describe("POST /todos", () => {
   it("should create new todo", done => {
