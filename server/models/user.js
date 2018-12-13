@@ -36,6 +36,8 @@ var UserSchema = new mongoose.Schema({
   ]
 });
 
+// instance methods are defined in .methods
+
 UserSchema.methods.toJSON = function() {
   var user = this;
   var userObject = user.toObject();
@@ -67,6 +69,28 @@ UserSchema.methods.generateAuthToken = function() {
 
   return user.save().then(() => {
     return token;
+  });
+};
+
+// model methods are defined in .statics
+
+UserSchema.statics.findByToken = function(token) {
+  var User = this;
+  var decoded;
+
+  try {
+    decoded = jwt.verify(token, "abc123");
+  } catch (e) {
+    return new Promise((resolve, reject) => {
+      reject();
+    });
+  }
+
+  // findOne also returns a promise, so we are gonna return it to add some promise chaining
+  return User.findOne({
+    _id: decoded._id,
+    "tokens.token": token,
+    "tokens.access": "auth"
   });
 };
 
